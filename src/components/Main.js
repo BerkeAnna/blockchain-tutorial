@@ -13,15 +13,16 @@ class Main extends Component {
                             <form onSubmit={(event) => {
                                 event.preventDefault()
                                 const content = this.postContent.value
-                                this.createPost(content)
+                                this.props.createPost(content)
                             }}>
                                 <div className="form-group mr-sm-2">
-                                    <input id="postContent"
-                                    type="text"
-                                   ref={(input) => {this.postContent = input}}
-                                    className="form-control"
-                                    placeholder="What's on your mind?"
-                                    required/>
+                                    <input
+                                        id="postContent"
+                                        type="text"
+                                        ref={(input) => { this.postContent = input }}
+                                        className="form-control"
+                                        placeholder="What's on your mind?"
+                                        required />
                                 </div>
                                 <button type="submit" className="btn btn-primary btn-block">Share</button>
                             </form>
@@ -33,11 +34,10 @@ class Main extends Component {
                                             <img className='mr-2'
                                                  width='30'
                                                  height='30'
-                                                 {/*// eslint-disable-next-line*/}
                                                  src={`data:image/png;base64,${new Identicon(post.author, 30).toString()}`}
                                                  alt="..."
                                             />
-                                            {/*// eslint-disable-next-line*/}
+
                                             <small className="text-muted">{post.author}</small>
                                         </div>
                                         <ul id="postList" className="list-group list-group-flush">

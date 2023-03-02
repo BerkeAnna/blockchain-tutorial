@@ -4,7 +4,7 @@ import Identicon from "identicon.js";
 import './App.css';
 import SocialNetwork from '../abis/SocialNetwork.json';
 import Navbar from './Navbar';
-import Main from './Navbar';
+import Main from './Main';
 class App extends Component {
 
   async componentWillMount() {
@@ -55,15 +55,13 @@ class App extends Component {
     //abi
   }
 
-  createPost(content){
-    this.setState({loading: true})
-    this.state.socialNetwork.methods.createPost(content).send({ from:this.state.account })
-        .once('receipt', (receipt) =>{
-          this.setState({loading: false})
+  createPost(content) {
+    this.setState({ loading: true })
+    this.state.socialNetwork.methods.createPost(content).send({ from: this.state.account })
+        .once('receipt', (receipt) => {
+          this.setState({ loading: false })
         })
-
-    this.createPost = this.createPost.bind(this)
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -74,6 +72,7 @@ class App extends Component {
       posts: [],
       loading: true
     }
+    this.createPost = this.createPost.bind(this)
   }
 
   // render() {
@@ -99,7 +98,9 @@ class App extends Component {
                   createPost={this.createPost}
               />
           }
+
         </div>
+
 
 
     );
