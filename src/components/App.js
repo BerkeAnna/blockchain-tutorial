@@ -33,20 +33,21 @@ class App extends Component {
     const networkData = SocialNetwork.networks[networkId]
     if (networkData) {
       const socialNetwork = web3.eth.Contract(SocialNetwork.abi, networkData.address)
-      console.log(socialNetwork)
-      this.setState({socialNetwork})
+      this.setState({ socialNetwork })
       const postCount = await socialNetwork.methods.postCount().call()
-      this.setState({postCount})
-      console.log(postCount)
-      //loadposts
+      this.setState({ postCount })
+      // Load Posts
       for (var i = 1; i <= postCount; i++) {
         const post = await socialNetwork.methods.posts(i).call()
         this.setState({
           posts: [...this.state.posts, post]
         })
       }
-      this.setState({loading: false})
-
+      // Sort posts. Show highest tipped posts first
+      this.setState({
+        posts: this.state.posts.sort((a,b) => b.tipAmount - a.tipAmount )
+      })
+      this.setState({ loading: false})
     } else {
       window.alert('SocialNetwork contract not deployed to detected network ')
     }
@@ -61,10 +62,18 @@ class App extends Component {
         .once('receipt', (receipt) => {
           this.setState({ loading: false })
         })
-  };
+  }
+
+  tipPost(id, tipAmount) {
+    this.setState({ loading: true })
+    this.state.socialNetwork.methods.tipPost(id).send({ from: this.state.account, value: tipAmount })
+        .once('receipt', (receipt) => {
+          this.setState({ loading: false })
+        })
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       account: '',
       socialNetwork: null,
@@ -72,7 +81,9 @@ class App extends Component {
       posts: [],
       loading: true
     }
+
     this.createPost = this.createPost.bind(this)
+    this.tipPost = this.tipPost.bind(this)
   }
 
   // render() {
@@ -90,19 +101,16 @@ class App extends Component {
   render() {
     return (
         <div>
-          <Navbar account={this.state.account}/>
-          {this.state.loading
-              ? <div id="loader" className="text-center mt-5"><p>Loading...</p>˙</div>
+          <Navbar account={this.state.account} />
+          { this.state.loading
+              ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
               : <Main
                   posts={this.state.posts}
                   createPost={this.createPost}
+                  tipPost={this.tipPost}
               />
           }
-
         </div>
-
-
-
     );
   }
 }
